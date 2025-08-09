@@ -101,24 +101,26 @@ func NewFileWriter(path *C.char, maxSizeMB C.long, maxBackups C.int, interval *C
 }
 
 //export NewTextFormatter
-func NewTextFormatter(styleID C.uintptr_t) C.uintptr_t {
+func NewTextFormatter(styleID C.uintptr_t, maxDepth C.int) C.uintptr_t {
 	var style *core.FormatStyle
 	if s, ok := formatStyleStore[uintptr(styleID)]; ok {
 		style = s
 	}
-	formatter := formatter.NewTextFormatter(style)
+	depth := int(maxDepth)
+	formatter := formatter.NewTextFormatter(style, &depth)
 	id := makeID()
 	formatterStore[id] = formatter
 	return C.uintptr_t(id)
 }
 
 //export NewJsonFormatter
-func NewJsonFormatter(styleId C.uintptr_t) C.uintptr_t {
+func NewJsonFormatter(styleId C.uintptr_t, maxDepth C.int) C.uintptr_t {
 	var style *core.FormatStyle
 	if s, ok := formatStyleStore[uintptr(styleId)]; ok {
 		style = s
 	}
-	formatter := formatter.NewJsonFormatter(style)
+	depth := int(maxDepth)
+	formatter := formatter.NewJsonFormatter(style, &depth)
 	id := makeID()
 	formatterStore[id] = formatter
 	return C.uintptr_t(id)
@@ -156,6 +158,10 @@ func LogToRoute(routeId C.uintptr_t, level core.LogLevel, msg *C.char, fieldsJSO
 	route := routeStore[uintptr(routeId)]
 	storeMu.Unlock()
 
+	if !route.ShouldLog(level) {
+		return
+	}
+
 	goMsg := C.GoString(msg)
 	jsonStr := C.GoString(fieldsJSON)
 
@@ -171,10 +177,8 @@ func LogToRoute(routeId C.uintptr_t, level core.LogLevel, msg *C.char, fieldsJSO
 		Message:   goMsg,
 		Fields:    fields,
 	}
+	route.Enqueue(record)
 
-	if route.ShouldLog(record) {
-		route.Enqueue(record)
-	}
 }
 
 //export Logger_TraceToRoute

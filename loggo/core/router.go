@@ -27,8 +27,8 @@ func NewRouteProcessor(formatter FormatProcessor, writer WriteProcessor, level L
 }
 
 // ShouldLog проверяет, подходит ли уровень события для этого роута.
-func (r *RouteProcessor) ShouldLog(record LogRecord) bool {
-	return record.Level >= r.LevelThreshold
+func (r *RouteProcessor) ShouldLog(level LogLevel) bool {
+	return level >= r.LevelThreshold
 }
 
 // Enqueue отправляет событие в очередь логирования (если не закрыто).

@@ -12,7 +12,7 @@ import threading
 
 
 class Logger:
-    def __init__(self, routes: list[RouteProcessor]):
+    def __init__(self, routes: list[RouteProcessor]) -> None:
         route_ids = [r.id for r in routes]
         self._c_logger = CLogger(route_ids)
         self._routes = routes
@@ -21,8 +21,8 @@ class Logger:
     def id(self) -> int:
         return self._c_logger._id
 
-    def _log(self, method: str, msg: str, **kwargs):
-        level = getattr(LogLevel, method.capitalize())
+    def _log(self, method: str, msg: str, **kwargs) -> None:
+        level: int = getattr(LogLevel, method.capitalize())
 
         msg_b = msg.encode()
         for route in self._routes:

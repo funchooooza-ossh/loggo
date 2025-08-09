@@ -52,7 +52,7 @@ func (l *Logger) log(level LogLevel, msg string, fields map[string]interface{}) 
 	}
 
 	for _, route := range l.routes {
-		if route.ShouldLog(record) {
+		if route.ShouldLog(record.Level) {
 			route.Enqueue(record)
 		}
 	}

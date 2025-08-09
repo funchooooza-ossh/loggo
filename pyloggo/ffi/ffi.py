@@ -31,11 +31,11 @@ lib.NewFormatStyle.argtypes = [
     ctypes.c_char_p,
 ]
 lib.NewFormatStyle.restype = ctypes.c_ulong
-lib.NewTextFormatter.argtypes = [ctypes.c_ulong]
+lib.NewTextFormatter.argtypes = [ctypes.c_ulong, ctypes.c_int]
 lib.NewTextFormatter.restype = ctypes.c_ulong
 lib.NewStdoutWriter.argtypes = []
 lib.NewStdoutWriter.restype = ctypes.c_ulong
-lib.NewJsonFormatter.argtypes = [ctypes.c_ulong]
+lib.NewJsonFormatter.argtypes = [ctypes.c_ulong, ctypes.c_int]
 lib.NewJsonFormatter.restype = ctypes.c_ulong
 lib.NewFileWriter.argtypes = [
     ctypes.c_char_p,  # path
